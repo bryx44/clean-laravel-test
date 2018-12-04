@@ -18,7 +18,7 @@ class AdminController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
-    public function banUser(User $id)
+    public function banUser(User $user)
     {
         $data = $request->validate([
             'reason'   => 'string',
@@ -34,10 +34,11 @@ class AdminController extends Controller
         if ($user->role == 1) {
             $error = new \Exception('Cannot ban an admin');
             $error->getMessage();
-        }else{
+        }
+
             //Set their role and status to banned
             $user->role->(9)->status(0)->save();
-        }
+       
 
         //If there was a reason passed in
         if (isset($data['reason'])) {
