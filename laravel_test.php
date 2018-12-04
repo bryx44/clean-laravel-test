@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\UserLog;
+use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
@@ -22,16 +24,18 @@ class AdminController extends Controller
             'reason'   => 'string',
         ]);
 
-        $user = \User::find($id);
+        $user = User::find($id);
 
         //If user not found
         if (! $user) {
-            throw new \Exception('User not found');
+            $error = new \Exception('User not found');
+            $error->getMessage();
         }
 
         //If user not admin
         if ($user->role == 1) {
-            throw new \Exception('Cannot ban an admin');
+            $error = new \Exception('Cannot ban an admin');
+            $error->getMessage();
         }
 
         //Set their role and status to banned
@@ -40,14 +44,14 @@ class AdminController extends Controller
         $user->save();
 
         //If there was a reason passed in
-        if (isset($data['reason']) && $data['reason']) {
-            \UserLog::create([
+        if (isset($data['reason'])) {
+            UserLog::create([
                 'user_id' => $user->id,
                 'action' => 'banned',
                 'reason' => $data['reason'],
             ]);
         } else {
-            \UserLog::create([
+            UserLog::create([
                 'user_id' => $user->id,
                 'action' => 'banned',
             ]);
