@@ -36,15 +36,16 @@ class AdminController extends Controller
         if ($user->role == 1) {
             $error = new \Exception('Cannot ban an admin');
             $error->getMessage();
-        }
-
+        }else{
         //Set their role and status to banned
         $user->role = 9;
         $user->status = 0;
         $user->save();
+        }
 
         //If there was a reason passed in
         if (isset($data['reason'])) {
+
             UserLog::create([
                 'user_id' => $user->id,
                 'action' => 'banned',
